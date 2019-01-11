@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AlarmProject</string>
+    <string name="World_clocks">Tab 1</string>
+    <string name="Alarm_clocks">Tab 2</string>
+    <string name="Time_to_sleep">Tab 3</string>
+    <string name="Wake_me_up_here">Tab 4</string>
+    <string name="clocks">Zegary</string>
+    <string name="alarm">Budzik</string>
+    <string name="wake_me_up_here_string">Obudź w</string>
+    <string name="time_to_sleep">Pora spać</string>
+    <string name="cancel">Anuluj</string>
+    <string name="add_alarm">Dodaj alarm</string>
+    <string name="save">Zachowaj</string>
+    <string name="etiquette">Etykieta:</string>
+    <string name="do_you_want_to_delete_clock">Czy chcesz usunąć wybrany zegar?</string>
+    <string name="delete">Usuń</string>
+    <string name="delete_alarm">Usuń alarm</string>
+    <string name="sleep">Sen</string>
+    <string name="wake_up">Pobudka</string>
+    <string name="days_of_week">Dni tygodnia</string>
+    <string name="monday">pon</string>
+    <string name="tuesday">wt</string>
+    <string name="wednesday">śr</string>
+    <string name="thursday">czw</string>
+    <string name="friday">pt</string>
+    <string name="saturday">so</string>
+    <string name="sunday">nie</string>
+    <string name="today">Dzisiaj</string>
+    <string name="yesterday">Wczoraj</string>
+    <string name="tomorrow">Jutro</string>
+    <string name="everyday">Codziennie</string>
+    <string name="alarm_title">Pobudka!</string>
+    <string name="alarm_desc">Pora wstać z łóżka.</string>
+    <string name="alarm_title2">Alarm</string>
+    <string name="alarm_desc2">Pora coś zrobić.</string>
+    <string name="time_to_sleep_title">Idź do łóżka!</string>
+    <string name="time_to_sleep_desc">Czas by iść spać.</string>
+    <string name="arrived_at_dest_title">Blisko celu</string>
+    <string name="arrived_at_dest_desc">Jesteś blisko punktu zainteresowania.</string>
+    <string name="edit_alarm">Edycja alarmu</string>
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AlarmProject</string>
+    <string name="World_clocks">Tab 1</string>
+    <string name="Alarm_clocks">Tab 2</string>
+    <string name="Time_to_sleep">Tab 3</string>
+    <string name="Wake_me_up_here">Tab 4</string>
+    <string name="clocks">Clocks</string>
+    <string name="alarm">Alarm</string>
+    <string name="wake_me_up_here_string">Wake up here</string>
+    <string name="time_to_sleep">Time to sleep</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_alarm">Add alarm</string>
+    <string name="save">Save</string>
+    <string name="etiquette">Etiquette:</string>
+    <string name="do_you_want_to_delete_clock">Do you want to delete selected clock?</string>
+    <string name="delete">Delete</string>
+    <string name="delete_alarm">Delete</string>
+    <string name="sleep">Dream</string>
+    <string name="wake_up">Wake up</string>
+    <string name="days_of_week">Days of week</string>
+    <string name="monday">mon</string>
+    <string name="tuesday">tue</string>
+    <string name="wednesday">wed</string>
+    <string name="thursday">thur</string>
+    <string name="friday">fri</string>
+    <string name="saturday">sat</string>
+    <string name="sunday">sun</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="everyday">Everyday</string>
+    <string name="alarm_title">Rise and shine!</string>
+    <string name="alarm_desc">It is time to get out of bed.</string>
+    <string name="alarm_title2">Alarm</string>
+    <string name="alarm_desc2">Time to do something.</string>
+    <string name="time_to_sleep_title">Go to bed!</string>
+    <string name="time_to_sleep_desc">It is time to go to sleep.</string>
+    <string name="arrived_at_dest_title">Near destination</string>
+    <string name="arrived_at_dest_desc">You are near your point of interest.</string>
+    <string name="edit_alarm">Edit alarm</string>
+</resources>
