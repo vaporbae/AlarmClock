@@ -2,6 +2,7 @@ package com.example.vapor.alarmproject;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vapor.alarmproject.Alarm.AlertReceiver;
 import com.example.vapor.alarmproject.WorldClock.AddWorldClock;
@@ -120,93 +122,109 @@ public class WorldClocksFragment extends Fragment {
             @Override
             public void run() {
 
-
-                for (int iterator = 0; iterator < clockElements.size(); iterator++) {
-                    Long tsLong = System.currentTimeMillis() / 1000;
-                    String ts = tsLong.toString();
-                    final int idd = clockElements.get(iterator).getId();
-                    String loc = database.clockElementDao().getElementById(idd).getLocation();
-                    //tu po prostu pobieram z api timezone asynchronicznie
-                    Call<Timezone> call = timeZoneApi.getTimeZone(loc, ts, "AIzaSyDRZgFUy7Hvu8tJGMKgGku85U8s56OW_dA");
-
-                    call.enqueue(new Callback<Timezone>() {
-                        @Override
-                        public void onResponse(Call<Timezone> call, Response<Timezone> response) {
-                            int dstOffSet;
-                            int rawOffSet;
-                            String timeZoneId;
-                            String timeZoneName;
-                            String dayString;
-                            String hourString;
+                if (clockElements.size() > 0) {
+                    Calendar rightNoww;
+                    rightNoww = Calendar.getInstance();
+                    int nowMinute = rightNoww.get(Calendar.MINUTE);
 
 
-                            //na podstawie timezone robie jakies smieszne obliczenia do stringa ale musze poprawic
-                            int thisHour;
-                            Calendar rightNow;
-
-                            final int thisRawOffset = (TimeZone.getDefault().getRawOffset() / 1000);
-                            rightNow = Calendar.getInstance();
-                            thisHour = rightNow.get(Calendar.HOUR_OF_DAY);
-
-                            Timezone timezone = response.body();
-                            dstOffSet = timezone.getDstOffset();
-                            rawOffSet = timezone.getRawOffset() - thisRawOffset;
-                            timeZoneId = timezone.getTimeZoneId();
-                            timeZoneName = timezone.getTimeZoneName();
+                        if (InternetConnection.checkConnection((getActivity().getApplicationContext()))) {
+                            final ProgressDialog dialog;
 
 
-                            //hourString = Integer.toString((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) + ":" + Integer.toString(rightNow.get(Calendar.MINUTE));
+                            for (int iterator = 0; iterator < clockElements.size(); iterator++) {
+                                Long tsLong = System.currentTimeMillis() / 1000;
+                                String ts = tsLong.toString();
+                                final int idd = clockElements.get(iterator).getId();
+                                String loc = database.clockElementDao().getElementById(idd).getLocation();
+                                //tu po prostu pobieram z api timezone asynchronicznie
+                                Call<Timezone> call = timeZoneApi.getTimeZone(loc, ts, "AIzaSyBgK5kCA04PmV0TgPlBgFBY2Hg6MGewwxQ");
 
-                            hourString="";
-                            if(((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24)<10)
-                                hourString+="0"+((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
-                            else
-                                hourString+=((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
-                            if((rightNow.get(Calendar.MINUTE))<10)
-                                hourString+=":"+"0"+(rightNow.get(Calendar.MINUTE));
-                            else
-                                hourString+=":"+(rightNow.get(Calendar.MINUTE));
+                                call.enqueue(new Callback<Timezone>() {
+                                    @Override
+                                    public void onResponse(Call<Timezone> call, Response<Timezone> response) {
+                                        int dstOffSet;
+                                        int rawOffSet;
+                                        String timeZoneId;
+                                        String timeZoneName;
+                                        String dayString;
+                                        String hourString;
 
-                            dayString = "";
 
-                            if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 < 12 && thisHour < 24 && thisHour > 12
-                                    &&((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 )-thisHour >12) {
-                                dayString += getResources().getString(R.string.tomorrow);
-                            } else if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 > 12 && thisHour > 0 && thisHour < 12
-                                    &&((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 )-thisHour >12)
-                                dayString += getResources().getString(R.string.yesterday);
-                            else
-                                dayString += getResources().getString(R.string.today);
+                                        int thisHour;
+                                        Calendar rightNow;
 
-                            if (rawOffSet < 0) {
-                                dayString += ", -" + rawOffSet / 3600 + "H";
+                                        final int thisRawOffset = (TimeZone.getDefault().getRawOffset() / 1000);
+                                        rightNow = Calendar.getInstance();
+                                        thisHour = rightNow.get(Calendar.HOUR_OF_DAY);
+
+                                        Timezone timezone = response.body();
+                                        dstOffSet = timezone.getDstOffset();
+                                        rawOffSet = timezone.getRawOffset() - thisRawOffset;
+                                        timeZoneId = timezone.getTimeZoneId();
+                                        timeZoneName = timezone.getTimeZoneName();
+
+                                        currentMinute = rightNow.get(Calendar.MINUTE);
+
+                                        //hourString = Integer.toString((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) + ":" + Integer.toString(rightNow.get(Calendar.MINUTE));
+
+                                        hourString = "";
+                                        if (((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) < 10)
+                                            hourString += "0" + ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
+                                        else
+                                            hourString += ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
+                                        if ((rightNow.get(Calendar.MINUTE)) < 10)
+                                            hourString += ":" + "0" + (rightNow.get(Calendar.MINUTE));
+                                        else
+                                            hourString += ":" + (rightNow.get(Calendar.MINUTE));
+
+                                        dayString = "";
+
+                                        if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 < 12 && thisHour < 24 && thisHour > 12
+                                                && ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) - thisHour > 12) {
+                                            dayString += getResources().getString(R.string.tomorrow);
+                                        } else if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 > 12 && thisHour > 0 && thisHour < 12
+                                                && ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) - thisHour > 12)
+                                            dayString += getResources().getString(R.string.yesterday);
+                                        else
+                                            dayString += getResources().getString(R.string.today);
+
+                                        if (rawOffSet < 0) {
+                                            dayString += ", -" + rawOffSet / 3600 + "H";
+                                        }
+
+                                        if (rawOffSet >= 0) {
+                                            dayString += ", +" + rawOffSet / 3600 + "H";
+                                        }
+                                        //updatuje dane o godzinie i przesunieciu w bazie
+                                        database.clockElementDao().updateStrings(idd, dayString, hourString);
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Timezone> call, Throwable t) {
+                                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
+                            clockElements = (ArrayList<ClockElement>) database.clockElementDao().getAllElements();
+                            //refresh listy
+                            itemsAdapter.clear();
+                            itemsAdapter.addAll(clockElements);
+                            itemsAdapter.notifyDataSetChanged();
 
-                            if (rawOffSet >= 0) {
-                                dayString += ", +" + rawOffSet / 3600 + "H";
-                            }
-                            //updatuje dane o godzinie i przesunieciu w bazie
-                            database.clockElementDao().updateStrings(idd, dayString, hourString);
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<Timezone> call, Throwable t) {
-
-                        }
-                    });
+                    }
                 }
-                clockElements = (ArrayList<ClockElement>) database.clockElementDao().getAllElements();
-                //refresh listy
-                itemsAdapter.clear();
-                itemsAdapter.addAll(clockElements);
-                itemsAdapter.notifyDataSetChanged();
+                            handler.postDelayed(this, 10000);
 
-                handler.postDelayed(this, 10000);
+
+
             }
         }, 10000);
 
     }
+
+    public int currentMinute=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -222,86 +240,108 @@ public class WorldClocksFragment extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        timeZoneApi = retrofit.create(TimeZoneApi.class);
-
-        clockElements = (ArrayList<ClockElement>) database.clockElementDao().getAllElements();
-
-        //to jest to samo co w powtarzajacej sie co sekunde petli
-        for (int iterator = 0; iterator < clockElements.size(); iterator++) {
-            Long tsLong = System.currentTimeMillis() / 1000;
-            String ts = tsLong.toString();
-            final int idd = clockElements.get(iterator).getId();
-            String loc = database.clockElementDao().getElementById(idd).getLocation();
-            Call<Timezone> call = timeZoneApi.getTimeZone(loc, ts, "AIzaSyDRZgFUy7Hvu8tJGMKgGku85U8s56OW_dA");
-
-            call.enqueue(new Callback<Timezone>() {
-                @Override
-                public void onResponse(Call<Timezone> call, Response<Timezone> response) {
-                    int dstOffSet;
-                    int rawOffSet;
-                    String timeZoneId;
-                    String timeZoneName;
-                    String dayString;
-                    String hourString;
-
-                    int thisHour;
-                    Calendar rightNow;
-
-                    final int thisRawOffset = (TimeZone.getDefault().getRawOffset() / 1000);
-                    rightNow = Calendar.getInstance();
-                    thisHour = rightNow.get(Calendar.HOUR_OF_DAY);
-
-                    Timezone timezone = response.body();
-                    dstOffSet = timezone.getDstOffset();
-                    rawOffSet = timezone.getRawOffset() - thisRawOffset;
-                    timeZoneId = timezone.getTimeZoneId();
-                    timeZoneName = timezone.getTimeZoneName();
 
 
-                    //hourString = Integer.toString((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) + ":" + Integer.toString(rightNow.get(Calendar.MINUTE));
-                    hourString="";
-                    if(((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24)<10)
-                        hourString+="0"+((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
-                    else
-                        hourString+=((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
-                    if((rightNow.get(Calendar.MINUTE))<10)
-                        hourString+=":"+"0"+(rightNow.get(Calendar.MINUTE));
-                    else
-                        hourString+=":"+(rightNow.get(Calendar.MINUTE));
+        if (InternetConnection.checkConnection((getActivity().getApplicationContext()))) {
+            final ProgressDialog dialog;
+            /**
+             * Progress Dialog for User Interaction
+             */
 
-                    dayString = "";
+            timeZoneApi = retrofit.create(TimeZoneApi.class);
 
-                    if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 < 12 && thisHour < 24 && thisHour > 12
-                            &&((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 )-thisHour >12) {
-                        dayString += getResources().getString(R.string.tomorrow);
-                    } else if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 > 12 && thisHour > 0 && thisHour < 12
-                            &&((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 )-thisHour >12)
-                        dayString += getResources().getString(R.string.yesterday);
-                    else
-                        dayString += getResources().getString(R.string.today);
+            clockElements = (ArrayList<ClockElement>) database.clockElementDao().getAllElements();
 
-                    if (rawOffSet < 0) {
-                        dayString += ", -" + rawOffSet / 3600 + "H";
-                    }
+            //to jest to samo co w powtarzajacej sie co sekunde petli
+            for (int iterator = 0; iterator < clockElements.size(); iterator++) {
+                Long tsLong = System.currentTimeMillis() / 1000;
+                String ts = tsLong.toString();
+                final int idd = clockElements.get(iterator).getId();
+                String loc = database.clockElementDao().getElementById(idd).getLocation();
+                Call<Timezone> call = timeZoneApi.getTimeZone(loc, ts, "AIzaSyBgK5kCA04PmV0TgPlBgFBY2Hg6MGewwxQ");
 
-                    if (rawOffSet >= 0) {
-                        dayString += ", +" + rawOffSet / 3600 + "H";
-                    }
 
-                    database.clockElementDao().updateStrings(idd, dayString, hourString);
 
-                    clockElements = (ArrayList<ClockElement>) database.clockElementDao().getAllElements();
-                    //dayStrings.put(String.valueOf(idd),dayString);
-                    //hourStrings.put(String.valueOf(idd),hourString);
+                call.enqueue(new Callback<Timezone>() {
+                                 @Override
+                                 public void onResponse(Call<Timezone> call, Response<Timezone> response) {
+                                     int dstOffSet;
+                                     int rawOffSet;
+                                     String timeZoneId;
+                                     String timeZoneName;
+                                     String dayString;
+                                     String hourString;
 
-                }
+                                     int thisHour;
+                                     Calendar rightNow;
 
-                @Override
-                public void onFailure(Call<Timezone> call, Throwable t) {
+                                     final int thisRawOffset = (TimeZone.getDefault().getRawOffset() / 1000);
+                                     rightNow = Calendar.getInstance();
+                                     thisHour = rightNow.get(Calendar.HOUR_OF_DAY);
 
-                }
-            });
+                                     currentMinute=rightNow.get(Calendar.MINUTE);
+
+                                     Timezone timezone = response.body();
+                                     dstOffSet = timezone.getDstOffset();
+                                     rawOffSet = timezone.getRawOffset() - thisRawOffset;
+                                     timeZoneId = timezone.getTimeZoneId();
+                                     timeZoneName = timezone.getTimeZoneName();
+
+
+                                     //hourString = Integer.toString((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) + ":" + Integer.toString(rightNow.get(Calendar.MINUTE));
+                                     hourString = "";
+                                     if (((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) < 10)
+                                         hourString += "0" + ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
+                                     else
+                                         hourString += ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24);
+                                     if ((rightNow.get(Calendar.MINUTE)) < 10)
+                                         hourString += ":" + "0" + (rightNow.get(Calendar.MINUTE));
+                                     else
+                                         hourString += ":" + (rightNow.get(Calendar.MINUTE));
+
+                                     dayString = "";
+
+                                     if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 < 12 && thisHour < 24 && thisHour > 12
+                                             && ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) - thisHour > 12) {
+                                         dayString += getResources().getString(R.string.tomorrow);
+                                     } else if ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24 > 12 && thisHour > 0 && thisHour < 12
+                                             && ((thisHour + (rawOffSet / 3600) + (rawOffSet % 3600)) % 24) - thisHour > 12)
+                                         dayString += getResources().getString(R.string.yesterday);
+                                     else
+                                         dayString += getResources().getString(R.string.today);
+
+                                     if (rawOffSet < 0) {
+                                         dayString += ", -" + rawOffSet / 3600 + "H";
+                                     }
+
+                                     if (rawOffSet >= 0) {
+                                         dayString += ", +" + rawOffSet / 3600 + "H";
+                                     }
+
+                                     database.clockElementDao().updateStrings(idd, dayString, hourString);
+
+                                     clockElements = (ArrayList<ClockElement>) database.clockElementDao().getAllElements();
+                                     //dayStrings.put(String.valueOf(idd),dayString);
+                                     //hourStrings.put(String.valueOf(idd),hourString);
+
+                                 }
+
+                                 @Override
+                                 public void onFailure(Call<Timezone> call, Throwable t) {
+                                     Log.e("DOC_",t.getMessage());
+                                     Log.e("DOC_", call.request().toString());
+                                     Toast.makeText(getActivity(), "Failure", Toast.LENGTH_SHORT).show();
+                                 }
+
+                             }
+                );
+
+            }
         }
+        else {
+                Toast.makeText(getActivity(), "No internet", Toast.LENGTH_SHORT).show();
+            }
+
 
         itemsAdapter = new WorldClocksFragment.MyListAdapter(getActivity(), R.layout.alarm_row, clockElements);
         lvItems = rootView.findViewById(R.id.clock_list);

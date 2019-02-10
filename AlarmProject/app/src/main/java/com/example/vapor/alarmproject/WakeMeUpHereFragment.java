@@ -80,6 +80,7 @@ public class WakeMeUpHereFragment extends Fragment {
     private EditText longitudeEditText;
     private Button findCoordinatesButton;
     private Button savePointButton;
+    public Circle circle;
 
     private AppDatabase database;
 
@@ -124,13 +125,7 @@ public class WakeMeUpHereFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_wake_me_up_here,container,false);
-        // Inflate the layout for this fragment
-        //View rootView = inflater.inflate(R.layout.fragment_wake_me_up_here, container, false);
 
-
-
-
-        //return rootView;
     }
 
     @Override
@@ -152,30 +147,8 @@ public class WakeMeUpHereFragment extends Fragment {
                     MINIMUM_DISTANCECHANGE_FOR_UPDATE,
                     new MyLocationListener()
             );
-            Location location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+            location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
         }
-
-
-
-        //latitudeEditText = (EditText) rootView.findViewById(R.id.point_latitude);
-        //longitudeEditText = (EditText) rootView.findViewById(R.id.point_longitude);
-        //findCoordinatesButton = (Button) rootView.findViewById(R.id.find_coordinates_button);
-        //savePointButton = (Button) rootView.findViewById(R.id.save_point_button);
-
-        /*findCoordinatesButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                populateCoordinatesFromLastKnownLocation();
-            }
-        });
-        savePointButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveProximityAlertPoint();
-            }
-        });
-        */
-
 
 
         mGoogleApiClient = new GoogleApiClient
@@ -189,16 +162,17 @@ public class WakeMeUpHereFragment extends Fragment {
         database.placeElementDao().deleteElement(1);
 
         View mapFragment = (MapView) getView().findViewById(R.id.map);
-        //SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
-        //        .findFragmentById(R.id.map);
         if(mapFragment!=null)
         {
+
             ((MapView) mapFragment).onCreate(null);
             ((MapView) mapFragment).onResume();
             ((MapView) mapFragment).getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
+
                     mMap = googleMap;
+                    mMap.clear();
                     LatLng position = new LatLng(database.placeElementDao().getElementById(1).getLat(),
                             database.placeElementDao().getElementById(1).getLang());
                     mMap.addMarker(new MarkerOptions().position(position).title("Pos"));
@@ -208,11 +182,17 @@ public class WakeMeUpHereFragment extends Fragment {
                     {
                         String r = database.placeElementDao().getElementById(1).getRadius();
                         POINT_RADIUS=new Long(r).longValue();
-                        Circle circle = mMap.addCircle(new CircleOptions()
+
+                        if(circle!=null){
+                            circle.remove();
+                        }
+                        circle = mMap.addCircle(new CircleOptions()
                                 .center(new LatLng(database.placeElementDao().getElementById(1).getLat(),
                                         database.placeElementDao().getElementById(1).getLang()))
-                                .radius(POINT_RADIUS)
-                                .strokeColor(Color.RED));
+                                .radius(POINT_RADIUS).
+                                strokeWidth(3f)
+                                .strokeColor(Color.RED).fillColor(Color.argb(70,150,50,50)));
+
                     }
 
                     if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -239,18 +219,12 @@ public class WakeMeUpHereFragment extends Fragment {
                     if(database.placeElementDao().getElementById(1).getLat()!=-34.0&&
                             database.placeElementDao().getElementById(1).getLang()!=151.0) {
                         database.placeElementDao().getElementById(1).setRadius(str);
-                        Circle circle = mMap.addCircle(new CircleOptions()
-                                .center(new LatLng(database.placeElementDao().getElementById(1).getLat(),
-                                        database.placeElementDao().getElementById(1).getLang()))
-                                .radius(POINT_RADIUS)
-                                .strokeColor(Color.RED));
+
                     }
                 }
                 catch (Exception e){
                     radiuss=new Double(POINT_RADIUS).doubleValue();
                 }
-                //zrobic zeby odrazu sie radius zmienial
-                //dodac baze zeby przechowywac te lokalizacje co byla wczesniej wklepana
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -258,10 +232,10 @@ public class WakeMeUpHereFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
+
         SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        //SupportPlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-          //      getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -289,10 +263,11 @@ public class WakeMeUpHereFragment extends Fragment {
                     radiuss=new Double(POINT_RADIUS).doubleValue();
                 }
 
-                Circle circle = mMap.addCircle(new CircleOptions()
+                circle = mMap.addCircle(new CircleOptions()
                         .center(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude))
-                        .radius(radiuss)
-                        .strokeColor(Color.RED));
+                        .radius(radiuss).
+                                strokeWidth(3f)
+                                .strokeColor(Color.RED).fillColor(Color.argb(70,150,50,50)));
 
                 addProximityAlert(place.getLatLng().latitude,place.getLatLng().longitude); //tak
             }
@@ -339,8 +314,9 @@ public class WakeMeUpHereFragment extends Fragment {
     Location location;
     private void saveProximityAlertPoint() {
         Location location;
-        if ( ContextCompat.checkSelfPermission( getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-            //tu zmienilam
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+        } else {
             location =locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             saveCoordinatesInPreferences((float)location.getLatitude(), //to przenioslam 3 linijki spoza ifa
                     (float)location.getLongitude());
@@ -357,10 +333,11 @@ public class WakeMeUpHereFragment extends Fragment {
     private void addProximityAlert(double latitude, double longitude) {
 
         Intent intent = new Intent(PROX_ALERT_INTENT);
-        PendingIntent proximityIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0); //tu zmienilam
+        PendingIntent proximityIntent = PendingIntent.getBroadcast(getActivity(), 8472, intent, 0); //tu zmienilam
 
-        if ( ContextCompat.checkSelfPermission( getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-            //tu zmienilam
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+        } else {
             locationManager.addProximityAlert(
                     latitude, // the latitude of the central point of the alert region
                     longitude, // the longitude of the central point of the alert region
@@ -409,8 +386,8 @@ public class WakeMeUpHereFragment extends Fragment {
         public void onLocationChanged(Location location) {
             Location pointLocation = retrievelocationFromPreferences();
             float distance = location.distanceTo(pointLocation);
-            Toast.makeText(getActivity(), //tu zmienilam
-                    "Distance from Point:"+distance, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), //tu zmienilam
+            //        "Distance from Point:"+distance, Toast.LENGTH_LONG).show();
         }
         public void onStatusChanged(String s, int i, Bundle b) {
         }

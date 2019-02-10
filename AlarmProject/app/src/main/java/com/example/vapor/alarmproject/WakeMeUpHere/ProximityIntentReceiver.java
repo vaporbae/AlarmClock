@@ -8,6 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.LocationManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.vapor.alarmproject.R;
@@ -33,19 +37,27 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, null, 0);
 
         Notification notification = createNotification();
 
+        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (alarmUri == null) {
+            alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        }
+        Ringtone ringtone = RingtoneManager.getRingtone(context, alarmUri);
 
-        Notification.Builder builder = new Notification.Builder(context)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_place)
+        NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
+        builder.setAutoCancel(true).
+                setDefaults(Notification.DEFAULT_ALL) .
+                setSmallIcon(R.mipmap.ic_place)
                 .setContentTitle(context.getResources().getString(R.string.arrived_at_dest_title))
-                .setContentText(context.getResources().getString(R.string.arrived_at_dest_desc));
+                .setContentText(context.getResources().getString(R.string.arrived_at_dest_desc))
+                .setDefaults(Notification.DEFAULT_LIGHTS)
+                .setContentInfo("Info")
+                .setSound(alarmUri);
 
         notification = builder.build();
-
+        notification.flags = Notification.FLAG_INSISTENT;
         notificationManager.notify(1,notification);
 
     }

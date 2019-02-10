@@ -485,7 +485,7 @@ public class TimeToSleepFragment extends Fragment {
         else{
             if(monday==true){
                 Calendar c=Calendar.getInstance();
-                c.set(Calendar.DAY_OF_WEEK,2); //monday
+                c.set(Calendar.DAY_OF_WEEK,1); //monday
                 c.set(Calendar.HOUR_OF_DAY, time_to_sleep_hour);
                 c.set(Calendar.MINUTE, time_to_sleep_minute);
                 c.set(Calendar.SECOND,0);
@@ -498,7 +498,7 @@ public class TimeToSleepFragment extends Fragment {
 
             if(tuesday==true){
                 Calendar c=Calendar.getInstance();
-                c.set(Calendar.DAY_OF_WEEK,3); //tuesday
+                c.set(Calendar.DAY_OF_WEEK,2); //tuesday
                 c.set(Calendar.HOUR_OF_DAY, time_to_sleep_hour);
                 c.set(Calendar.MINUTE, time_to_sleep_minute);
                 c.set(Calendar.SECOND,0);
@@ -511,7 +511,7 @@ public class TimeToSleepFragment extends Fragment {
 
             if(wednesday==true){
                 Calendar c=Calendar.getInstance();
-                c.set(Calendar.DAY_OF_WEEK,4); //wednesday
+                c.set(Calendar.DAY_OF_WEEK,3); //wednesday
                 c.set(Calendar.HOUR_OF_DAY, time_to_sleep_hour);
                 c.set(Calendar.MINUTE, time_to_sleep_minute);
                 c.set(Calendar.SECOND,0);
@@ -524,7 +524,7 @@ public class TimeToSleepFragment extends Fragment {
 
             if(thursday==true){
                 Calendar c=Calendar.getInstance();
-                c.set(Calendar.DAY_OF_WEEK,5); //thursday
+                c.set(Calendar.DAY_OF_WEEK,4); //thursday
                 c.set(Calendar.HOUR_OF_DAY, time_to_sleep_hour);
                 c.set(Calendar.MINUTE, time_to_sleep_minute);
                 c.set(Calendar.SECOND,0);
@@ -537,7 +537,7 @@ public class TimeToSleepFragment extends Fragment {
 
             if(friday==true){
                 Calendar c=Calendar.getInstance();
-                c.set(Calendar.DAY_OF_WEEK,6); //friday
+                c.set(Calendar.DAY_OF_WEEK,5); //friday
                 c.set(Calendar.HOUR_OF_DAY, time_to_sleep_hour);
                 c.set(Calendar.MINUTE, time_to_sleep_minute);
                 c.set(Calendar.SECOND,0);
@@ -550,7 +550,7 @@ public class TimeToSleepFragment extends Fragment {
 
             if(saturday==true){
                 Calendar c=Calendar.getInstance();
-                c.set(Calendar.DAY_OF_WEEK,7); //saturday
+                c.set(Calendar.DAY_OF_WEEK,6); //saturday
                 c.set(Calendar.HOUR_OF_DAY, time_to_sleep_hour);
                 c.set(Calendar.MINUTE, time_to_sleep_minute);
                 c.set(Calendar.SECOND,0);
@@ -563,7 +563,7 @@ public class TimeToSleepFragment extends Fragment {
 
             if(sunday==true){
                 Calendar c=Calendar.getInstance();
-                c.set(Calendar.DAY_OF_WEEK,1); //sunday
+                c.set(Calendar.DAY_OF_WEEK,7); //sunday
                 c.set(Calendar.HOUR_OF_DAY, time_to_sleep_hour);
                 c.set(Calendar.MINUTE, time_to_sleep_minute);
                 c.set(Calendar.SECOND,0);

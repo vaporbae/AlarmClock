@@ -34,7 +34,7 @@ public class AlertReceiver extends BroadcastReceiver {
         builder.setAutoCancel(true).
                 setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_alarm)
                 .setContentTitle(context.getResources().getString(R.string.alarm_title2))
                 .setContentText(context.getResources().getString(R.string.alarm_desc2))
                 .setDefaults(Notification.DEFAULT_LIGHTS)
